@@ -5,10 +5,10 @@ from telegram.ext import ApplicationBuilder, CommandHandler, CallbackQueryHandle
 from company import company_handler
 from performer import performer_handler
 
-load_dotenv()  # Load environment variables from .env file
+load_dotenv()
 
-async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    # Create inline buttons for the options
+
+async def start(update: Update):
     keyboard = [
         [InlineKeyboardButton("Company", callback_data="button_a")],
         [InlineKeyboardButton("Performer", callback_data="button_b")]
@@ -17,19 +17,16 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("Choose an option:", reply_markup=reply_markup)
 
 async def button_click(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    # Handle the button click event
     query = update.callback_query
-    await query.answer()  # Acknowledge the callback query
+    await query.answer()
     if query.data == "button_a":
-        await company_handler(update, context)
+        await company_handler(update)
     elif query.data == "button_b":
-        await performer_handler(update, context)
+        await performer_handler(update)
 
-# Read the bot token from environment variable
 TOKEN = os.getenv("pliz_bot_token")
 app = ApplicationBuilder().token(TOKEN).build()
 
-# Add handlers for commands and callback queries
 app.add_handler(CommandHandler("start", start))
 app.add_handler(CallbackQueryHandler(button_click))
 
